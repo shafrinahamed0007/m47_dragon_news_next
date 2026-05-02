@@ -1,8 +1,9 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const LoginPage = () => {
   const {
@@ -10,6 +11,7 @@ const LoginPage = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
+  const [isShowpassword, setIsShowPassword] = useState(false);
 
   const handleLoginFun = async (data) => {
     console.log("Login form data using react hook form: ", data);
@@ -43,16 +45,20 @@ const LoginPage = () => {
               <p className="text-red-500">{errors.email.message}</p>
             )}
           </fieldset>
-          <fieldset className="fieldset">
+          <fieldset className="fieldset relative">
             <legend className="fieldset-legend">Password</legend>
             <input
               {...register("password", {
                 required: "Password field is requried",
               })}
-              type="password"
+              type={isShowpassword ? "text" : "password"}
               className="input"
               placeholder="Enter your password"
             />
+            <span className="absolute right-1 top-4" onClick={() => setIsShowPassword(!isShowpassword)}>
+              {isShowpassword ? <FaEye /> : <FaEyeSlash />}
+            </span>
+
             {errors.password && (
               <p className="text-red-500">{errors.password.message}</p>
             )}
