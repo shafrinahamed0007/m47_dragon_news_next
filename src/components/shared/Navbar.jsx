@@ -1,10 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import userAvatar from "@/assets/user.png";
 import NavLink from "./NavLink";
+import { authClient } from "@/lib/auth-client";
 
 const Navbar = () => {
+  const { data: session, isPending } = authClient.useSession();
+  // console.log("User Error: ", session);
+  const user = session?.user;
+  console.log("User Details: ", user, isPending);
   return (
     <div className="container mx-auto flex justify-between gap-4 mt-6">
       <div></div>
@@ -22,12 +29,30 @@ const Navbar = () => {
         </li>
       </ul>
 
-      <div className="flex items-center gap-2">
-        <Image src={userAvatar} alt="User avatar" width={60} height={60} />
+      {isPending ? (
+        <span className="loading loading-infinity loading-xl"></span>
+      ) : user ? (
+        <div className="flex items-center gap-2">
+          <h2>Hello! {user?.name}</h2>
+
+          <Image
+            src={user?.image || userAvatar}
+            alt="User avatar"
+            width={60}
+            height={60}
+          />
+          <button
+            onClick={async () => await authClient.signOut()}
+            className="btn btn-outline btn-error"
+          >
+            Logout
+          </button>
+        </div>
+      ) : (
         <button className="btn bg-purple-500 text-white">
           <Link href={"/login"}>Login</Link>
         </button>
-      </div>
+      )}
     </div>
   );
 };
